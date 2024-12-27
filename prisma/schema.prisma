@@ -1,0 +1,82 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Pet {
+  id                   String                 @id @default(uuid())
+  org                  Org                    @relation(fields: [org_id], references: [id])
+  org_id               String
+  city                 City                   @relation(fields: [city_id], references: [id])
+  name                 String
+  age                  String
+  description          String
+  size                 String
+  energy               Int
+  level_of_dependence  String
+  enviroment           String
+  photo                String
+  requirements         String
+  type                 String
+  city_id              String
+  adoptionRequirements AdoptionRequirements[]
+  pets                 PetGallery[]
+
+  @@map("pets")
+}
+
+model Org {
+  id             String    @id @default(uuid())
+  name           String
+  email          String    @unique
+  address        String
+  whatsappNumber String
+  cep            String
+  password_hash  String
+  created_at     DateTime? @default(now())
+
+  pets Pet[]
+
+  @@map("orgs")
+}
+
+model City {
+  id       String @id @default(uuid())
+  name     String
+  state    State  @relation(fields: [state_id], references: [id])
+  Pet      Pet[]
+  state_id String
+
+  @@map("citys")
+}
+
+model State {
+  id   String @id @default(uuid())
+  name String @unique
+  City City[]
+
+  @@map("states")
+}
+
+model AdoptionRequirements {
+  id     String @id @default(uuid())
+  title  String
+  pet    Pet    @relation(fields: [pet_id], references: [id])
+  pet_id String
+}
+
+model PetGallery {
+  id     String @id @default(uuid())
+  pet    Pet    @relation(fields: [pet_id], references: [id])
+  pet_id String
+  image  String
+
+  @@map("pet_galery")
+}
